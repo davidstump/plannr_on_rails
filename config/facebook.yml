@@ -1,0 +1,11 @@
+development: &defaults
+  client_id: 386347538097339
+  client_secret: 8361bb556d1f3d0754dd4a78c6287df3
+  scope: publish_stream,friends_events,user_events, email, friends_birthday, create_event, rsvp_event
+  canvas_url: http://apps.facebook.com/plannrappdev
+
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults

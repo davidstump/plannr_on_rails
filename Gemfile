@@ -1,5 +1,6 @@
 source 'https://rubygems.org'
 
+gem 'rake'
 gem 'rails', '3.2.6'
 
 group :assets do
@@ -9,6 +10,7 @@ group :assets do
 end
 
 gem 'jquery-rails'
+gem 'fb_graph'
 
 group :production do
   gem 'pg'
