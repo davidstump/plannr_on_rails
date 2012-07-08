@@ -49,18 +49,26 @@ class DashboardsController < ApplicationController
     
     rawevents.each do |event|
       eventid = event.raw_attributes["id"]
+      start = ""
+      enddate = ""
+      date = ""
       
       #format start date
       start_date = event.raw_attributes["start_time"].gsub("T", "-")
       start_parts = start_date.split('-')
-      start = start_parts[1].to_s + " " + start_parts[2].to_s + ", " + start_parts[0].to_s + " " + start_parts[3].to_s
+      if start_parts[1].present?
+        start = start_parts[1].to_s + " " + start_parts[2].to_s + ", " + start_parts[0].to_s + " " + start_parts[3].to_s
+      end
       #format end date
       end_date = event.raw_attributes["end_time"].gsub("T", "-")
       end_parts = end_date.split('-')
-      enddate = end_parts[1].to_s + " " + end_parts[2].to_s + ", " + end_parts[0].to_s + " " + end_parts[3].to_s
+      if end_parts[1].present?
+        enddate = end_parts[1].to_s + " " + end_parts[2].to_s + ", " + end_parts[0].to_s + " " + end_parts[3].to_s
+      end
       #format date string
-      date = start_parts[1].to_s + "/" + start_parts[2].to_s + "/" + start_parts[0].to_s + " to " + end_parts[1].to_s + "/" + end_parts[2].to_s + "/" + end_parts[0].to_s
-      
+      if start_parts.present? && end_parts.present?
+        date = start_parts[1].to_s + "/" + start_parts[2].to_s + "/" + start_parts[0].to_s + " to " + end_parts[1].to_s + "/" + end_parts[2].to_s + "/" + end_parts[0].to_s
+      end
       #create events array
       events[eventid] = [
         "id" => event.raw_attributes["id"],
