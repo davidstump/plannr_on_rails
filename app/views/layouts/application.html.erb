@@ -1,14 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Plannr</title>
-  <%= stylesheet_link_tag    "application", :media => "all" %>
-  <%= javascript_include_tag "application" %>
-  <%= csrf_meta_tags %>
-</head>
-<body>
-
-<%= yield %>
-
-</body>
-</html>
+<%= render 'layouts/header' %>
+    <div id="facebook">
+        <script>
+               $("body").removeClass("loggedout");
+        </script>
+      <div id="toggles">
+        <button id="toggleBirthdays"><img src="/assets/birthdays.jpg" alt="birthdays" border="0" /></button>
+        <button id="toggleConfirmed"><img src="/assets/confirmed.jpg" alt="confirmed" border="0" /></button>
+        <button id="toggleEvents"><img src="/assets/events.jpg" alt="events" border="0" /></button>
+      </div>
+      	<%= yield %>
+        <div id="footer">
+            <div id="left">&COPY; Copyright David Stump &amp; Curtis Estridge</div>
+            <div id="right"><a href="mailto:david@davidstump.net">Contact</a></div>
+        </div>
+        <!-- insert dialog ruby code here -->
+    </div>
+<%= render 'layouts/footer' %>

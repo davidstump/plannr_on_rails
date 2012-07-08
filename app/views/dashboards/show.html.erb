@@ -1,0 +1,205 @@
+<script type='text/javascript'>
+function basename (path, suffix) {
+    var b = path.replace(/^.*[\/\\]/g, '');
+
+    if (typeof(suffix) == 'string' && b.substr(b.length - suffix.length) == suffix) {
+        b = b.substr(0, b.length - suffix.length);
+    }
+
+    return b;
+}
+
+$(document).ready(function() {
+
+        var date = new Date(); 
+        var d = date.getDate(); 
+        var m = date.getMonth();
+        var y = date.getFullYear(); 
+
+        var calendar = $('#calendar').fullCalendar({
+                disableDragging: true,
+                header: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'month,agendaWeek,agendaDay'
+                },
+                selectable: true,
+                selectHelper: true,
+                dayClick: function (date, allDay, jsEvent, view) {  
+                        $("#dialog").dialog('open');      
+                        $("#date-start").val($.fullCalendar.formatDate(date, 'MM/dd/yyyy')); 
+                        $("#date-end").val($.fullCalendar.formatDate(date, 'MM/dd/yyyy')); 
+                        $("#time-start").val($.fullCalendar.formatDate(date, 'HH:mm')); 
+                        $("#time-end").val($.fullCalendar.formatDate(date, 'HH:mm'));  
+                }, 
+                editable: true,
+                events: [
+                        <%
+                            birthdaynum = @birthdays.length
+                            @birthdays.each_with_index do |(id, birthday), i|
+                            	birthday_id = @birthdays[id][0]["uid"].to_s
+                            	birthday_name = @birthdays[id][0]["name"].to_s
+                            	birthday_picture = @birthdays[id][0]["picture"].to_s
+                            	birthday_day = @birthdays[id][0]["birthday"].to_s
+                            	
+                            	if birthday_day.length > 0
+	                                concat "{" 
+	                                concat "id: '" + birthday_id + "'," 
+	                                concat "className: 'birthday'," 
+	                                concat "title: '" + birthday_name.gsub(/['"\\\x0]/,'\\\\\0') + "\\'s Birthday'," 
+	                                concat "start: new Date('" + birthday_day + "')," 
+	                                concat "type: 'birthday'," 
+	                                concat "picture: '" + birthday_picture.gsub(/['"\\\x0]/,'\\\\\0') + "'," 
+	                                concat "birthday: '" + birthday_day + "'," 
+	                                concat "color: '#00a1cb'," 
+	                                concat "textColor: '#014f66'" 
+	                                concat "}" 
+	                                if i < (birthdaynum - 1)
+	                                   concat "," 
+	                                end
+	                                i+=1
+	                        	end
+                            end
+                            if @birthdays.length > 0
+                                concat "," 
+                            end
+                        %>
+                        <%
+                            eventnum = @events.length
+                            @events.each_with_index do |(id, event), i|
+                            	event_id = @events[id][0]["uid"].to_s
+                            	event_name = @events[id][0]["name"].to_s
+                            	event_start = @events[id][0]["start"].to_s
+                            	event_end = @events[id][0]["end"].to_s
+                            	event_rsvp = @events[id][0]["rsvp"].to_s
+                            	event_picture = @events[id][0]["picture"].to_s
+                            	event_date = @events[id][0]["date"].to_s
+                            	event_description = @events[id][0]["description"].to_s
+                            	
+                            	
+                                concat "{" 
+                                concat "id: '" + event_id + "'," 
+                                concat "title: '" + event_name.gsub(/['"\\\x0]/,'\\\\\0') + "'," 
+                                concat "start: new Date('" + event_start + "')," 
+                                concat "end: new Date('" + event_end + "')," 
+                                #concat event_rsvp 
+                                if event_rsvp == "attending"
+                                    concat "color: '#85c900'," 
+                                    concat "textColor: '#557f00'," 
+                                    concat "className: 'confirmed-event'," 
+                                elsif event_rsvp == "declined"
+                                    concat "color: '#e5e5e5'," 
+                                    concat "textColor: '#727272'," 
+                                    concat "className: 'event'," 
+                                else
+                                    concat "color: '#cfd102'," 
+                                    concat "textColor: '#838301'," 
+                                    concat "className: 'event'," 
+                                end
+                                concat "allDay: false," 
+                                concat "type: 'event'," 
+                                concat "picture: '" + event_picture + "'," 
+                                concat "eventDate: '" + event_date + "'," 
+                                concat "description: '" + event_description.gsub(/['"\\\x0]/,'\\\\\0') + "'" 
+                                concat "}" 
+                                if !i == (eventnum - 1)
+                                   concat "," 
+                                end
+                            end
+                        %>
+                ],
+            eventClick: function(calEvent, jsEvent, view) {
+                if (calEvent.type === "birthday") {
+                    $("#birthday-dialog #birthday-date").html(calEvent.birthday);
+                    $("#birthday-dialog #birthday-link a").attr('href', "http://facebook.com/" + calEvent.id);
+                    $("#birthday-dialog #birthday-picture").html("<img src='" + calEvent.picture + "' width='100' border='0' />");
+                    $("#birthday-dialog").dialog({
+                        title: calEvent.title,
+                        height: 250,
+                        width: 400,
+                        modal: true
+                    });
+                } else {
+                    $("#event-dialog #event-date").html(calEvent.eventDate);
+                    $("#event-dialog #event-description").html(calEvent.description);
+                    $("#event-dialog #event-link a").attr('href', "http://facebook.com/events/" + calEvent.id);
+                    $("#event-dialog #event-picture").html("<img src='" + calEvent.picture + "' border='0' width='100' />");
+                    $("#event-dialog").dialog({
+                        title: calEvent.title,
+                        height: 450,
+                        width: 700,
+                        modal: true
+                    });
+                }
+            }
+        });
+
+        $("#dialog").dialog({
+            autoOpen: false,
+            height: 450,
+            width: 700,
+            modal: true,
+            buttons: {
+                'Create event': function () {
+                    calendar.fullCalendar('renderEvent',
+                        {
+                                title:  $("#name").val(),
+                                start:  new Date($("#date-start").val() + " " + $("#time-start").val()),
+                                end:  new Date($("#date-end").val() + " " + $("#time-end").val())
+                        },
+                        true // make the event "stick"
+                    );
+                    calendar.fullCalendar('unselect');
+                    
+                    var photo = "";
+                    if ($("#photo").val() > "") {
+                        var data = new FormData();
+                        jQuery.each($('#photo')[0].files, function(i, file) {
+                            data.append('photo-'+i, file);
+                        });
+                      $.ajax({
+                            url: '/includes/upload.php',
+                            data: data,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            type: 'POST',
+                            success: function(data){
+                                photo = data;
+                                //save event to facebook via ajax
+                                $.ajax({
+                                   type: 'POST',
+                                   url: 'https://graph.facebook.com/me/events?access_token=<%= current_user.access_token %>',
+                                   data: 'name=' + $("#name").val() + '&start_time=' + $("#date-start").val() + " " + $("#time-start").val() + '&end_time=' + $("#date-end").val() + " " + $("#time-end").val() + '&description=' + $("#description").val() + '&@file.jpg=@/home/david/public_html/uploads/' + photo,
+                                   success: function(msg) {
+                                       //all done. woot.
+                                   }
+                               });
+                            }
+                        });  
+                    } else {
+                        //save event to facebook via ajax
+                        $.ajax({
+                           type: 'POST',
+                           url: 'https://graph.facebook.com/me/events?access_token=<%= current_user.access_token %>',
+                           data: 'name=' + $("#name").val() + '&start_time=' + $("#date-start").val() + " " + $("#time-start").val() + '&end_time=' + $("#date-end").val() + " " + $("#time-end").val() + '&description=' + $("#description").val(),
+                           success: function(msg) {
+                               //all done. woot.
+                           }
+                       });
+                    }
+
+                   $(this).dialog('close');
+                },
+                Cancel: function () {
+                    $(this).dialog('close');
+                }
+            },
+
+            close: function () {
+            }
+    });   
+});
+</script>
+        
+<div id='calendar'></div>
