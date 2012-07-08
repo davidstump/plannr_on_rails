@@ -69,7 +69,7 @@ class DashboardsController < ApplicationController
         "end" => enddate,
         "date" => date,
         "description" => event.description,
-        "picture" => event.raw_attributes["name"],
+        "picture" => event.picture,
         "rsvp" => event.raw_attributes["rsvp_status"]
       ]
     end

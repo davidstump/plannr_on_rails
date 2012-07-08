@@ -25,7 +25,7 @@ $(document).ready(function() {
                 },
                 selectable: true,
                 selectHelper: true,
-                dayClick: function (date, allDay, jsEvent, view) {  
+                dayClick: function (date, allDay, jsEvent, view) {
                         $("#dialog").dialog('open');      
                         $("#date-start").val($.fullCalendar.formatDate(date, 'MM/dd/yyyy')); 
                         $("#date-end").val($.fullCalendar.formatDate(date, 'MM/dd/yyyy')); 
@@ -109,6 +109,7 @@ $(document).ready(function() {
                         %>
                 ],
             eventClick: function(calEvent, jsEvent, view) {
+            	console.log("hello?");
                 if (calEvent.type === "birthday") {
                     $("#birthday-dialog #birthday-date").html(calEvent.birthday);
                     $("#birthday-dialog #birthday-link a").attr('href', "http://facebook.com/" + calEvent.id);
