@@ -56,13 +56,15 @@ class DashboardsController < ApplicationController
       #format start date
       start_date = event.raw_attributes["start_time"].gsub("T", "-")
       start_parts = start_date.split('-')
-      if start_parts[1].present?
+      start_parts = nil
+      if start_parts.present?
         start = start_parts[1].to_s + " " + start_parts[2].to_s + ", " + start_parts[0].to_s + " " + start_parts[3].to_s
       end
       #format end date
       end_date = event.raw_attributes["end_time"].gsub("T", "-")
       end_parts = end_date.split('-')
-      if end_parts[1].present?
+    end_parts = nil
+      if end_parts.present?
         enddate = end_parts[1].to_s + " " + end_parts[2].to_s + ", " + end_parts[0].to_s + " " + end_parts[3].to_s
       end
       #format date string

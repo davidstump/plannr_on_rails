@@ -1,3 +1,11 @@
+<script>
+       $("body").removeClass("loggedout");
+</script>
+<div id="toggles">
+	<button id="toggleBirthdays"><img src="/assets/birthdays.jpg" alt="birthdays" border="0" /></button>
+	<button id="toggleConfirmed"><img src="/assets/confirmed.jpg" alt="confirmed" border="0" /></button>
+	<button id="toggleEvents"><img src="/assets/events.jpg" alt="events" border="0" /></button>
+</div>
 <script type='text/javascript'>
 function basename (path, suffix) {
     var b = path.replace(/^.*[\/\\]/g, '');
@@ -102,9 +110,9 @@ $(document).ready(function() {
                                 concat "eventDate: '" + event_date + "'," 
                                 concat "description: '" + event_description.gsub(/['"\\\x0]/,'\\\\\0') + "'" 
                                 concat "}" 
-                                if !i == (eventnum - 1)
-                                   concat "," 
-                                end
+                                if @events.length > 0
+                               		concat "," 
+                            	end
                             end
                         %>
                 ],
@@ -204,3 +212,9 @@ $(document).ready(function() {
 </script>
         
 <div id='calendar'></div>
+
+<div id="footer">
+    <div id="left">&COPY; Copyright David Stump &amp; Curtis Estridge</div>
+    <div id="right"><a href="mailto:david@davidstump.net">Contact</a></div>
+</div>
+<%= render 'layouts/dialog' %>
